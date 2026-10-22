@@ -26,9 +26,10 @@ RUN CGO_ENABLED=0 GOOS=linux GOFLAGS=-mod=mod \
 FROM debian:bookworm-slim
 
 # ca-certificates is required for the outbound HTTPS calls (WeChat OAuth and
-# the yybadaccess API). tzdata keeps log timestamps interpretable.
+# the yybadaccess API). tzdata keeps log timestamps interpretable. wget is
+# used by the container healthcheck to probe /health.
 RUN apt-get update \
- && apt-get install -y --no-install-recommends ca-certificates tzdata \
+ && apt-get install -y --no-install-recommends ca-certificates tzdata wget \
  && rm -rf /var/lib/apt/lists/* \
  && groupadd -r -g 10001 yyb \
  && useradd -r -u 10001 -g yyb -s /usr/sbin/nologin yyb
