@@ -1,0 +1,30 @@
+# Build artifacts
+/yyb-go
+/yyb-go.exe
+/dist/
+/build/
+
+# Local runtime state: never bake secrets or account databases into an image.
+/resource/db/
+/resource/avatars/
+/resource/qr/
+
+# Local overrides
+.env
+.env.*
+*.local
+
+# Editor and OS noise
+.git/
+.gitignore
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Test and coverage output
+*.test
+*.out
+coverage.*

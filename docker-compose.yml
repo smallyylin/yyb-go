@@ -1,0 +1,52 @@
+services:
+  yyb-go:
+    image: ${YYB_IMAGE:-ghcr.io/CHANGE_ME/yyb-go:latest}
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: yyb-go
+    restart: unless-stopped
+    # Bind to loopback only. nginx on the host reverse-proxies to it, so the Go
+    # process is never reachable directly from the internet.
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      TZ: Asia/Shanghai
+      YYB_AUTH_USER: ${YYB_AUTH_USER:-admin}
+      # Required. The server refuses to start without it, which is the point:
+      # an open instance hands out every stored WeChat account.
+      YYB_AUTH_TOKEN: ${YYB_AUTH_TOKEN:?YYB_AUTH_TOKEN must be set}
+    volumes:
+      # Persist SQLite, avatars and QR images across container recreation.
+      - yyb-data:/app/resource/db
+      - yyb-avatars:/app/resource/avatars
+      - yyb-qr:/app/resource/qr
+    command:
+      - "-host"
+      - "0.0.0.0"
+      - "-port"
+      - "8000"
+      - "-resource-root"
+      - "/app/resource"
+    healthcheck:
+      # /health is the one endpoint that bypasses auth on purpose.
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8000/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+
+volumes:
+  yyb-data:
+  yyb-avatars:
+  yyb-qr:

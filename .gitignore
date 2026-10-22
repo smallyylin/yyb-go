@@ -1,0 +1,30 @@
+# Binaries
+/yyb-go
+/yyb-go.exe
+/dist/
+/build/
+
+# Runtime state: SQLite database, downloaded avatars, generated QR images.
+# These contain live WeChat credentials and must never be committed.
+/resource/db/
+/resource/avatars/
+/resource/qr/
+
+# Secrets
+.env
+.env.*
+*.local
+!*.example
+
+# Editor and OS noise
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Test output
+*.test
+*.out
+coverage.*
