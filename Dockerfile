@@ -7,6 +7,11 @@ WORKDIR /src
 
 # Copy manifests first so the module download layer is cached across code edits.
 COPY go.mod go.sum ./
+
+# proxy.golang.org is unreachable from mainland China build hosts; goproxy.cn
+# mirrors the same module set and falls back to `direct` for private modules.
+ARG GOPROXY=https://goproxy.cn,direct
+ENV GOPROXY=${GOPROXY} GOSUMDB=sum.golang.google.cn
 RUN go mod download
 
 COPY . .
